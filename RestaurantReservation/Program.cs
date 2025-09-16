@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
-using RestaurantReservation.Repositories;
+using RestaurantReservation.Db.Repositories;
+
+namespace RestaurantReservation;
 
 class Program
 {
@@ -205,40 +207,40 @@ class Program
          await restaurantRepository.DeleteRestaurantAsync(fetched.RestaurantID);
          Console.WriteLine($"Deleted Restaurant: {fetched.Name}");
  */
- /*
- // --------------- Table
-        var newTable = new Table
-        {
-            Capacity = 4,
-            RestaurantID = 3 // Make sure this RestaurantID exists
-        };
-        await tableRepository.AddTableAsync(newTable);
-        Console.WriteLine($"Added Table with ID: {newTable.TableID}");
+        /*
+        // --------------- Table
+               var newTable = new Table
+               {
+                   Capacity = 4,
+                   RestaurantID = 3 // Make sure this RestaurantID exists
+               };
+               await tableRepository.AddTableAsync(newTable);
+               Console.WriteLine($"Added Table with ID: {newTable.TableID}");
 
-        // READ BY ID
-        var table = await tableRepository.GetTableByIdAsync(newTable.TableID);
-        Console.WriteLine($"Fetched Table ID: {table?.TableID}, Capacity: {table?.Capacity}");
+               // READ BY ID
+               var table = await tableRepository.GetTableByIdAsync(newTable.TableID);
+               Console.WriteLine($"Fetched Table ID: {table?.TableID}, Capacity: {table?.Capacity}");
 
-        // UPDATE
-        if (table != null)
-        {
-            table.Capacity = 6;
-            await tableRepository.UpdateTableAsync(table);
-            Console.WriteLine($"Updated Table ID: {table.TableID} to Capacity: {table.Capacity}");
-        }
+               // UPDATE
+               if (table != null)
+               {
+                   table.Capacity = 6;
+                   await tableRepository.UpdateTableAsync(table);
+                   Console.WriteLine($"Updated Table ID: {table.TableID} to Capacity: {table.Capacity}");
+               }
 
-        // READ ALL
-        var allTables = await tableRepository.GetAllTablesAsync();
-        Console.WriteLine("All Tables:");
-        foreach (var t in allTables)
-        {
-            Console.WriteLine($"Table ID: {t.TableID}, Capacity: {t.Capacity}");
-        }
+               // READ ALL
+               var allTables = await tableRepository.GetAllTablesAsync();
+               Console.WriteLine("All Tables:");
+               foreach (var t in allTables)
+               {
+                   Console.WriteLine($"Table ID: {t.TableID}, Capacity: {t.Capacity}");
+               }
 
-        // DELETE
-        await tableRepository.DeleteTableAsync(newTable.TableID);
-        Console.WriteLine($"Deleted Table with ID: {newTable.TableID}");
-        */
+               // DELETE
+               await tableRepository.DeleteTableAsync(newTable.TableID);
+               Console.WriteLine($"Deleted Table with ID: {newTable.TableID}");
+               */
         // ------------------------ before async
         // CREATE
         /*
