@@ -25,6 +25,14 @@ public class RestaurantReservationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        ConfigureTables(modelBuilder);
+        ConfigureProperties(modelBuilder);
+        ConfigureRelationships(modelBuilder);
+        SeedData(modelBuilder);
+    }
+
+    private void ConfigureTables(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Restaurant>().ToTable("Restaurant", "Restaurant");
         modelBuilder.Entity<Customer>().ToTable("Customer", "Restaurant");
         modelBuilder.Entity<Table>().ToTable("Table", "Restaurant");
@@ -33,7 +41,10 @@ public class RestaurantReservationDbContext : DbContext
         modelBuilder.Entity<Reservation>().ToTable("Reservation", "Restaurant");
         modelBuilder.Entity<Order>().ToTable("Order", "Restaurant");
         modelBuilder.Entity<OrderItem>().ToTable("OrderItem", "Restaurant");
+    }
 
+    private void ConfigureProperties(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<MenuItem>()
             .Property(m => m.Price)
             .HasColumnType("decimal(10,2)");
@@ -41,7 +52,10 @@ public class RestaurantReservationDbContext : DbContext
         modelBuilder.Entity<Order>()
             .Property(o => o.TotalAmount)
             .HasColumnType("decimal(10,2)");
+    }
 
+    private void ConfigureRelationships(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Reservation>()
             .HasOne(r => r.Table)
             .WithMany(t => t.Reservations)
@@ -71,7 +85,11 @@ public class RestaurantReservationDbContext : DbContext
             .WithMany(m => m.OrderItems)
             .HasForeignKey(oi => oi.ItemID)
             .OnDelete(DeleteBehavior.Cascade);
+    }
 
+    private void SeedData(ModelBuilder modelBuilder)
+    {
+        // Restaurants
         modelBuilder.Entity<Restaurant>().HasData(
             new Restaurant { RestaurantID = 1, Name = "Downtown Diner", Address = "123 Main St", OpeningHours = "9:00 AM - 10:00 PM", PhoneNumber = "555-1234" },
             new Restaurant { RestaurantID = 2, Name = "Pizza Palace", Address = "456 Elm St", OpeningHours = "11:00 AM - 11:00 PM", PhoneNumber = "555-1235" },
