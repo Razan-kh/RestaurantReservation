@@ -53,4 +53,23 @@ public async Task UpdateEmployeeAsync(Employee employee)
             await _context.SaveChangesAsync();
         }
     }
+    // Retrieves all employees who hold the position of "Manager
+    public async Task<List<Employee>> ListManagers()
+    {
+        return await _context.Employees
+                             .Where(e => e.Position == "Manager")
+                             .ToListAsync();
+    }
+
+    // calculates the average order amount for that specific employee.
+    public async Task<decimal> CalculateAverageOrderAmount(int employeeId)
+    {
+        var orders = _context.Orders
+                .Where(o => o.EmployeeID == employeeId);
+        
+        if (!await orders.AnyAsync())
+            return 0m; // No orders for this employee
+
+        return await orders.AverageAsync(o => o.TotalAmount);
+    }
 }

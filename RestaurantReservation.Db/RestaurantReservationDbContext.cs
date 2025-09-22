@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db.Models;
+using RestaurantReservation.Db.Views;
 
 namespace RestaurantReservation.Db;
 
@@ -13,6 +14,7 @@ public class RestaurantReservationDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<RestaurantsEmployeesView> RestaurantsEmployeesView { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -26,6 +28,7 @@ public class RestaurantReservationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureTables(modelBuilder);
+        ConfigureViews(modelBuilder);
         ConfigureProperties(modelBuilder);
         ConfigureRelationships(modelBuilder);
         SeedData(modelBuilder);
@@ -41,6 +44,21 @@ public class RestaurantReservationDbContext : DbContext
         modelBuilder.Entity<Reservation>().ToTable("Reservation", "Restaurant");
         modelBuilder.Entity<Order>().ToTable("Order", "Restaurant");
         modelBuilder.Entity<OrderItem>().ToTable("OrderItem", "Restaurant");
+    }
+
+    private void ConfigureViews(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ReservationDetailView>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vwReservationsWithDetails", "Restaurant");
+            });
+
+            modelBuilder.Entity<RestaurantsEmployeesView>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vwEmployeesAndRestaurants", "Restaurant");
+            });
     }
 
     private void ConfigureProperties(ModelBuilder modelBuilder)
@@ -73,7 +91,7 @@ public class RestaurantReservationDbContext : DbContext
             .WithMany(c => c.Reservations)
             .HasForeignKey(r => r.CustomerID)
             .OnDelete(DeleteBehavior.Cascade);
-
+/*
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.Order)
             .WithMany(o => o.OrderItems)
@@ -85,6 +103,18 @@ public class RestaurantReservationDbContext : DbContext
             .WithMany(m => m.OrderItems)
             .HasForeignKey(oi => oi.ItemID)
             .OnDelete(DeleteBehavior.Cascade);
+*/
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.MenuItem)
+            .WithMany(mi => mi.OrderItems)
+            .HasForeignKey(oi => oi.ItemID)
+            .OnDelete(DeleteBehavior.Restrict);  
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Order)
+            .WithMany(o => o.OrderItems)
+            .HasForeignKey(oi => oi.OrderID)
+            .OnDelete(DeleteBehavior.Cascade);  
     }
 
     private void SeedData(ModelBuilder modelBuilder)
@@ -160,5 +190,12 @@ public class RestaurantReservationDbContext : DbContext
             new OrderItem { OrderItemID = 4, OrderID = 4, ItemID = 4, Quantity = 3 },
             new OrderItem { OrderItemID = 5, OrderID = 5, ItemID = 5, Quantity = 2 }
         );
+    }
+
+    [DbFunction("CalculateTotalRevenue", "Restaurant")]
+    public decimal CalculateTotalRevenue(int restaurantId)
+    {
+        // The body will never be executed; EF translates it to SQL
+        throw new NotImplementedException();
     }
 }

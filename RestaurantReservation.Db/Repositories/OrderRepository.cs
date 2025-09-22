@@ -69,4 +69,14 @@ public class OrderRepository
             await _context.SaveChangesAsync();
         }
     }
+    
+    // lists the orders placed on that specific reservation along with the associated menu items
+    public async Task<List<Order>> ListOrdersAndMenuItems(int reservationId)
+    {
+        return await _context.Orders
+                             .Where(o => o.ReservationID == reservationId)
+                             .Include (o => o.OrderItems)
+                             .ThenInclude (oi => oi.MenuItem)
+                             .ToListAsync();
+    }
 }

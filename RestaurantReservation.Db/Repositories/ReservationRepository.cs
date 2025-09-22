@@ -79,4 +79,14 @@ public class ReservationRepository
     {
         return await _context.Reservations.FirstOrDefaultAsync(r => r.ReservationID == id);
     }
+
+    // list of reservations made by that particular customer
+    public async Task<List<Reservation>> GetReservationsByCustomer(int customerId)
+    {
+        return await _context.Reservations
+                             .Include (r => r.Restaurant)
+                             .Include (r => r.Table)
+                             .Where (r => r.CustomerID == customerId)
+                             .ToListAsync();
+    }
 }

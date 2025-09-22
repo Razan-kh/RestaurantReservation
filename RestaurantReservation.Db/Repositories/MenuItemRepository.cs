@@ -64,4 +64,14 @@ public class MenuItemRepository
             await _context.SaveChangesAsync();
         }
     }
+    // finds the menu items ordered in that specific reservation
+    public async Task<List<MenuItem>> ListOrderedMenuItems(int reservationId)
+    {
+        return await _context.Orders
+                             .Where(o => o.ReservationID == reservationId)
+                             .Include(o => o.OrderItems)
+                             .ThenInclude(oi => oi.MenuItem)
+                             .SelectMany(o => o.OrderItems.Select(oi => oi.MenuItem)) // flatten
+                             .ToListAsync();
+    }
 }
